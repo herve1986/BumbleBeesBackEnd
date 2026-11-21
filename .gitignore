@@ -1,0 +1,19 @@
+
+# Environnement virtuel
+.venv/
+venv/
+
+# Variables secrètes
+.env
+.env.*
+
+# Autoriser le fichier exemple
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+
+# IDE
+.vscode/
+.idea/
