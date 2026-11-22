@@ -1,5 +1,3 @@
-# swagger : http://127.0.0.1:8000/docs
-
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

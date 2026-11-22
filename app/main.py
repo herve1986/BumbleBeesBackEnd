@@ -1,13 +1,26 @@
-
+from contextlib import asynccontextmanager
+from app.routers import user_router
 from fastapi import FastAPI, HTTPException
-
 from app.db.connection import get_connection
+from app.db.init_db import init_db
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialisation de la base de données
+    init_db()
+
+    yield
+
+    # Code exécuté à l'arrêt de l'application
 
 app = FastAPI(
     title="BumbleBees API",
     description="Backend de BumbleBees",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
+
+app.include_router(user_router.router)
 
 
 @app.get("/")
@@ -29,6 +42,7 @@ def database_health():
     try:
         db = get_connection()
         result = db.execute("SELECT 1").fetchone()
+        db.close()
 
         return {
             "status": "ok",
