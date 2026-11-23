@@ -36,8 +36,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             address TEXT NULL,
             city TEXT NOT NULL,
-            date TEXT NULL,
-            hour TEXT NULL
+            date DATE NULL,
+            hour TIME NULL
         )
     """)
 

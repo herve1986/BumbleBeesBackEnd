@@ -1,8 +1,12 @@
+
 from contextlib import asynccontextmanager
-from app.routers import user_router
-from fastapi import FastAPI, HTTPException
-from app.db.connection import get_connection
+from fastapi import FastAPI
+from app.routers import user_router, group_router, music_router, concert_router, image_router
 from app.db.init_db import init_db
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -13,6 +17,7 @@ async def lifespan(app: FastAPI):
 
     # Code exécuté à l'arrêt de l'application
 
+
 app = FastAPI(
     title="BumbleBees API",
     description="Backend de BumbleBees",
@@ -21,39 +26,18 @@ app = FastAPI(
 )
 
 app.include_router(user_router.router)
+app.include_router(group_router.router)
+app.include_router(music_router.router)
+app.include_router(concert_router.router)
+app.include_router(image_router.router)
 
 
-@app.get("/")
-def home():
-    return {
-        "message": "Bienvenue sur BumbleBees API"
-    }
+IMAGES_DIR = Path(__file__).resolve().parent / "static" / "images"
+IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
+app.mount(
+    "/static/images",
+    StaticFiles(directory=IMAGES_DIR),
+    name="images"
+)
 
-@app.get("/health")
-def health():
-    return {
-        "status": "ok"
-    }
-
-
-@app.get("/health/database")
-def database_health():
-    try:
-        db = get_connection()
-        result = db.execute("SELECT 1").fetchone()
-        db.close()
-
-        return {
-            "status": "ok",
-            "database": "connected",
-            "test": result[0]
-        }
-
-    except Exception as e:
-        print(f"ERREUR TURSO : {type(e).__name__}: {e}")
-
-        raise HTTPException(
-            status_code=503,
-            detail="Database connection failed"
-        )

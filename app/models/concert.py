@@ -1,3 +1,5 @@
+from datetime import date, time
+
 
 class Concert:
     def __init__(
@@ -5,13 +7,11 @@ class Concert:
         id: int | None = None,
         address: str | None = None,
         city: str = "",
-        date: str | None = None,
-        hour: str | None = None
+        date_concert: date | None = None,
+        time_concert: time | None = None
     ):
         self.id = id
         self.address = address
         self.city = city
-        self.date = date
-        self.hour = hour
-
-        
+        self.date_concert = date_concert
+        self.time_concert = time_concert

@@ -5,7 +5,10 @@ from app.repositories.user_repository import UserRepository
 from app.services.user_service import UserService
 from app.schemas.user import UserCreate, UserResponse
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/user",
+    tags=["User"]
+)
 
 
 def get_user_service() -> Iterator[UserService]:
