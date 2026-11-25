@@ -1,6 +1,4 @@
-
 from datetime import date, time
-
 from app.models.concert import Concert
 
 
@@ -37,6 +35,7 @@ class ConcertRepository:
             """
             SELECT id, address, city, date, hour
             FROM concerts
+            ORDER BY date DESC
             """
         )
 

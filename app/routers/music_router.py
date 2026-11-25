@@ -1,15 +1,17 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
 from app.models.music import Music
 from app.repositories.music_repository import MusicRepository
 from app.repositories.group_repository import GroupRepository
 from app.db.connection import get_connection
+from fastapi import Depends
+from app.dependencies.authorisation import  require_role
+from app.enum.user_role import UserRole
 
 
 router = APIRouter(
     prefix="/musics",
-    tags=["Musics"]
+    tags=["Musics"],
 )
 
 
@@ -18,7 +20,7 @@ class MusicRequest(BaseModel):
     group_id: int
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def create_music(music_data: MusicRequest):
     db = get_connection()
 
@@ -112,7 +114,7 @@ def get_music(music_id: int):
     }
 
 
-@router.put("/{music_id}")
+@router.put("/{music_id}", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def update_music(music_id: int, music_data: MusicRequest):
     db = get_connection()
 
@@ -147,7 +149,7 @@ def update_music(music_id: int, music_data: MusicRequest):
     }
 
 
-@router.delete("/{music_id}")
+@router.delete("/{music_id}", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def delete_music(music_id: int):
     db = get_connection()
     repository = MusicRepository(db)

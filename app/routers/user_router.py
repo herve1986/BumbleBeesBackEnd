@@ -4,10 +4,12 @@ from app.db.connection import get_connection
 from app.repositories.user_repository import UserRepository
 from app.services.user_service import UserService
 from app.schemas.user import UserCreate, UserResponse
+from app.dependencies.authorisation import  require_role
+from app.enum.user_role import UserRole
 
 router = APIRouter(
     prefix="/user",
-    tags=["User"]
+    tags=["User"],
 )
 
 
@@ -21,12 +23,13 @@ def get_user_service() -> Iterator[UserService]:
         db.close()
 
 
-@router.post("/users", response_model=UserResponse)
+@router.post("/users", response_model=UserResponse, dependencies=[Depends(require_role(UserRole.ADMIN))]) 
 def create_user(
     user: UserCreate,
     service: UserService = Depends(get_user_service)
 ):
     return service.create_user(
         user.firstname,
+        user.role,
         user.password
     )

@@ -1,7 +1,6 @@
-
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from app.routers import user_router, group_router, music_router, concert_router, image_router
+from app.routers import user_router, group_router, music_router, concert_router, image_router, auth_router
 from app.db.init_db import init_db
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
@@ -45,6 +44,7 @@ app.include_router(group_router.router)
 app.include_router(music_router.router)
 app.include_router(concert_router.router)
 app.include_router(image_router.router)
+app.include_router(auth_router.router)
 
 
 IMAGES_DIR = Path(__file__).resolve().parent / "static" / "images"

@@ -9,6 +9,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             firstname TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'none',
             password TEXT NOT NULL
         )
     """)

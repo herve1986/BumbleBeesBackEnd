@@ -1,19 +1,17 @@
-
 from datetime import date, time
-
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
 from app.models.concert import Concert
 from app.repositories.concert_repository import ConcertRepository
 from app.db.connection import get_connection
-
+from fastapi import Depends
+from app.dependencies.authorisation import  require_role
+from app.enum.user_role import UserRole
 
 router = APIRouter(
     prefix="/concerts",
-    tags=["Concerts"]
+    tags=["Concerts"],
 )
-
 
 class ConcertRequest(BaseModel):
     address: str | None = None
@@ -22,7 +20,8 @@ class ConcertRequest(BaseModel):
     time_concert: time | None = None
 
 
-@router.post("/")
+
+@router.post("/", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def create_concert(concert_data: ConcertRequest):
     db = get_connection()
     repository = ConcertRepository(db)
@@ -86,7 +85,7 @@ def get_concert(concert_id: int):
     }
 
 
-@router.put("/{concert_id}")
+@router.put("/{concert_id}", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def update_concert(concert_id: int, concert_data: ConcertRequest):
     db = get_connection()
     repository = ConcertRepository(db)
@@ -115,7 +114,7 @@ def update_concert(concert_id: int, concert_data: ConcertRequest):
     }
 
 
-@router.delete("/{concert_id}")
+@router.delete("/{concert_id}", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def delete_concert(concert_id: int):
     db = get_connection()
     repository = ConcertRepository(db)

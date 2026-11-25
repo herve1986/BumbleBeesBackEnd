@@ -1,14 +1,17 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
 from app.models.group import Group
 from app.repositories.group_repository import GroupRepository
 from app.db.connection import get_connection
+from fastapi import Depends
+from app.dependencies.authorisation import  require_role
+from app.enum.user_role import UserRole
+
 
 
 router = APIRouter(
     prefix="/groups",
-    tags=["Groups"]
+    tags=["Groups"],
 )
 
 
@@ -16,7 +19,7 @@ class GroupRequest(BaseModel):
     name: str
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def create_group(group_data: GroupRequest):
     db = get_connection()
     repository = GroupRepository(db)
@@ -66,7 +69,7 @@ def get_group(group_id: int):
     }
 
 
-@router.put("/{group_id}")
+@router.put("/{group_id}", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def update_group(group_id: int, group_data: GroupRequest):
     db = get_connection()
     repository = GroupRepository(db)
@@ -89,7 +92,7 @@ def update_group(group_id: int, group_data: GroupRequest):
     }
 
 
-@router.delete("/{group_id}")
+@router.delete("/{group_id}", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def delete_group(group_id: int):
     db = get_connection()
     repository = GroupRepository(db)

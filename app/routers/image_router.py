@@ -5,18 +5,21 @@ import shutil
 from app.models.image import Image
 from app.repositories.image_repository import ImageRepository
 from app.db.connection import get_connection
+from fastapi import Depends
+from app.dependencies.authorisation import  require_role
+from app.enum.user_role import UserRole
 
 
 router = APIRouter(
     prefix="/images",
-    tags=["Images"]
+    tags=["Images"],
 )
 
 IMAGES_DIR = Path(__file__).resolve().parent.parent / "static" / "images"
 IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def create_image(
     title: str = Form(...),
     file: UploadFile = File(...)
@@ -104,7 +107,7 @@ def get_image(image_id: int):
     }
 
 
-@router.put("/{image_id}")
+@router.put("/{image_id}", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def update_image(
     image_id: int,
     title: str = Form(...)
@@ -131,7 +134,7 @@ def update_image(
     }
 
 
-@router.delete("/{image_id}")
+@router.delete("/{image_id}", dependencies=[Depends(require_role(UserRole.ADMIN))])
 def delete_image(image_id: int):
     db = get_connection()
     repository = ImageRepository(db)
