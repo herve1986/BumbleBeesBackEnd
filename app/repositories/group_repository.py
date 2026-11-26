@@ -74,11 +74,20 @@ class GroupRepository:
     def delete(self, group_id: int):
         cursor = self.db.cursor()
 
-        cursor.execute(
-            "DELETE FROM groups WHERE id = ?",
-            (group_id,)
-        )
+        try:
+            cursor.execute(
+                "DELETE FROM musics WHERE group_id = ?",
+                (group_id,)
+            )
 
-        self.db.commit()
+            cursor.execute(
+                "DELETE FROM groups WHERE id = ?",
+                (group_id,)
+            )
+
+            self.db.commit()
+        except Exception:
+            self.db.rollback()
+            raise
 
         return cursor.rowcount > 0
