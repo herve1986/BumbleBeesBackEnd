@@ -35,7 +35,8 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "http://localhost:5173",
         "https://www.bumblebees.band",
-        "https://www.bumblebees-frontend.vercel.app"
+        "https://www.bumblebees-frontend.vercel.app",
+        "https://hervevandendrisse.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
